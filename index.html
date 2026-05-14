@@ -202,15 +202,21 @@ document.addEventListener('DOMContentLoaded', async function() {
           if (_prev) _prev();
           ytPlayer = new YT.Player('__yt', {
             videoId: VID,
-            playerVars: { autoplay:1, mute:1, controls:0, loop:1, playlist:VID },
+            playerVars: { autoplay:0, controls:0, loop:1, playlist:VID },
             events: {
               onReady: function(e) {
-                e.target.playVideo();
-                setTimeout(function() {
-                  e.target.unMute();
-                  e.target.setVolume(90);
-                  ytPending = false;
-                }, 800);
+                e.target.setVolume(90);
+                // Desktop: try immediate autoplay
+                try { e.target.playVideo(); } catch(x) {}
+                // Mobile: play on first user touch/click (counts as gesture)
+                var playOnce = function() {
+                  try { e.target.playVideo(); } catch(x) {}
+                  document.removeEventListener('touchstart', playOnce);
+                  document.removeEventListener('click', playOnce);
+                };
+                document.addEventListener('touchstart', playOnce, { once:true, passive:true });
+                document.addEventListener('click', playOnce, { once:true });
+                ytPending = false;
               },
               onStateChange: function(e) {
                 ytPlaying = (e.data === 1);

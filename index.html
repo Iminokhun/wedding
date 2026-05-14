@@ -240,7 +240,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
 
         function replaceBtn() {
-          var orig = document.querySelector('header button:not(#__yt-btn)');
+          var orig = document.querySelector('header button.music:not(#__yt-btn)');
           if (!orig) return;
           var nb = document.createElement('button');
           nb.id = '__yt-btn';
@@ -256,9 +256,8 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
 
         replaceBtn();
-        // Re-replace if React ever re-renders and restores the original button
         var obs = new MutationObserver(function() {
-          if (document.querySelector('header button:not(#__yt-btn)')) replaceBtn();
+          if (document.querySelector('header button.music:not(#__yt-btn)')) replaceBtn();
         });
         obs.observe(document.body, { childList:true, subtree:true });
       }
